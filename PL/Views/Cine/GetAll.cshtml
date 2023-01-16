@@ -1,0 +1,49 @@
+﻿@model ML.Result
+@{
+    ViewData["Title"] = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Cines</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            Bienvienidos a la pestaña de Cine. Para agregar, presiona el botón verde "+".
+        </div>
+        <div class="col-md-4">
+            @Html.ActionLink("+", "Form", "Cine", htmlAttributes: new {@class="btn btn-success"})
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<div class="container">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Editar</th>
+                <th>Nombre</th>
+                <th>Dirección</th>
+                <th>Venta</th>
+                <th>Zona</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach(ML.Cine cine in Model.Objects)
+            {
+                <tr>
+                    <td><a class="btn btn-warning" href="@Url.Action("Form", "Cine", new {IdCine=cine.IdCine})"><i class="bi bi-pencil-square"></i></a>
+                    <td>@cine.Nombre</td>
+                    <td>@cine.Direccion</td>
+                    <td>@cine.Venta</td>
+                    <td>@cine.Zona.Descripcion</td>
+                    <td><a class="btn btn-danger" href="@Url.Action("Delete", "Cine", new {IdCine = cine.IdCine})" onclick="return confirm('¿Estás seguro que deseas eliminar el cine?');"><i class="bi bi-trash-fill"></i></a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

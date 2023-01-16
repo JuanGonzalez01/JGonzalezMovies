@@ -1,0 +1,159 @@
+﻿@model ML.Cine
+@{
+    ViewData["Title"] = "Form";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Formulario</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Form", "Cine", FormMethod.Post, new { enctype = "multipart/from-data" }))
+            {
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group" style="display:none">
+                            @Html.Label("ID Cine:")
+                            @Html.TextBoxFor(Model => Model.IdCine, new {@class="form-control", @id="txtIdCine"})
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.Label("Dirección:")
+                            @Html.TextBoxFor(Model => Model.Direccion, new {@class="form-control", @id="txtDireccion", placeholder="Dirección", @readonly = "readonly"})
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            @Html.Label("Nombre:")
+                            @Html.TextBoxFor(Model => Model.Nombre, new {@class="form-control", @id="txtNombre", placeholder="Nombre"})
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            @Html.Label("Venta:")
+                            @Html.TextBoxFor(Model => Model.Venta, new {@class="form-control", @id="txtVenta", placeholder="Venta"})
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            @Html.Label("Zona:")
+                            @Html.DropDownListFor(Model => Model.Zona.IdZona, new SelectList(Model.Zona.Zonas, "IdZona", "Descripcion"), "- Selecciona una zona", new {@class="form-control", @id="ddlZona"})
+                        </div>
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="container" id="mapita">
+                    <h5>Selecciona un lugar del mapa:</h5>
+                    <div id="map" style="height: 400px; width: 100%;"></div>
+                </div>
+
+                <br />
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <input type="submit" , class="btn btn-success" value="Guardar" />
+                        @Html.ActionLink("Regresar", "GetAll", "Cine", htmlAttributes: new{@class="btn btn-danger"})
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSKBDdPPlfca_zTwyxKiicRQn1qfgRjLw&callback=initMap&v=weekly" defer></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script>
+        function obtenerCoor() {
+            const geocoder = new google.maps.Geocoder();
+            var direccion = $('#txtDireccion').val();
+            var ubicacion = { lat: 19.430107, lng: -99.161335 };
+
+            if (direccion != '') {
+                geocoder
+                    .geocode({ address: direccion })
+                    .then((response) => {
+                        var latitud = response.results[0].geometry.location.lat();
+                        var longitud = response.results[0].geometry.location.lng();
+
+                        ubicacion[lat] = latitud;
+                        ubicacion[lng] = longitud;
+
+                    })
+                    .catch((e) => window.alert("Geocoder falló debido a: " + e)); //En caso de cachar una excepción, mandar alerta con el error.
+            }
+
+            return ubicacion;
+        }
+
+        // Inicializar mapa
+        function initMap() {
+            // Coordenadas de ubicación inicial
+            const ubicacion = obtenerCoor();
+            // Centrar el mapa en la ubicación
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 15,
+                center: ubicacion,
+            });
+
+            const geocoder = new google.maps.Geocoder();
+
+            var contenido = "";
+            if ($('#txtDireccion').val() != '') {
+                contenido = $('#txtDireccion').val();
+            } else {
+                contenido = "Click en el mapa para obtener la dirección";
+            }
+
+            // Crear objeto de ventanita
+            let infoWindow = new google.maps.InfoWindow({
+                content: contenido,
+                position: ubicacion,
+            });
+            //Abrir ventanita de info
+            infoWindow.open(map);
+
+            // Configurar el evento del mouse
+            map.addListener("click", (mapsMouseEvent) => {
+                // Cerrar la ventanita que inició por default
+                infoWindow.close();
+                // Crear otra ventanita con las coordenadas del click
+                infoWindow = new google.maps.InfoWindow({
+                    position: mapsMouseEvent.latLng,
+                });
+
+                //Meter coordenadas de locación de geocoder del click
+                geocoder
+                    .geocode({ location: mapsMouseEvent.latLng })
+                    .then((response) => {
+                        //Declarar como contenido de la ventanita el atributo de la dirección, de la respuesta del servicio
+                        infoWindow.setContent(response.results[0].formatted_address);
+                        //Declarar esa info en el TextBox de Dirección
+                        $('#txtDireccion').val(response.results[0].formatted_address);
+                        //Abrir ventanita de nuevo.
+                        infoWindow.open(map);
+                    })
+                    .catch((e) => window.alert("Geocoder falló debido a: " + e)); //En caso de cachar una excepción, mandar alerta con el error.
+            });
+        }
+        //Iniciar mapa
+        window.initMap = initMap;
+    </script>
+}

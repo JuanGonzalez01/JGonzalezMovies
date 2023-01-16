@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = null;
+}
+@model ML.Movie
+
+<link rel="stylesheet" type="text/css" href="~/css/Cards.css" />
+<script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+
+@foreach (ML.Movie peli in Model.Peliculas)
+{
+    <div class="movie-card">
+
+        <div class="container">
+
+            <a href="#"><img src=@peli.Poster alt="cover" class="cover" width="187" height="282" /></a>
+
+            <div class="hero" style="background: url(@peli.Fondo); background-size: 780px 350px;">
+
+                <div class="details">
+
+                    <div class="title1"><h1>@peli.Nombre</h1></div>
+
+                    <div class="title2"><h2>(@peli.Fecha.Substring(0, 4))</h2></div>
+
+
+                </div> <!-- end details -->
+
+        </div> <!-- end hero -->
+
+        <div class="description">
+
+                <div class="column1">
+                    <a class="tag" href="@Url.Action("Favoritos", "Movie", new {IdMovie = peli.IdMovie, FavPeticion=false})" onclick="return confirm('¿Estás seguro que deseas eliminar la película de la lista?');"> <i class="fa-solid fa-heart-circle-xmark fa-beat" style="color:red"></i> Eliminar de Favoritos</a>
+                </div> <!-- end column1 -->
+
+            <div class="column2">
+
+                    <p>@peli.Descripcion</p>
+
+                </div> <!-- end column2 -->
+        </div> <!-- end description -->
+
+
+    </div> <!-- end container -->
+</div> <!-- end movie-card -->
+}

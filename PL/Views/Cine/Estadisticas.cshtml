@@ -1,0 +1,47 @@
+﻿@model Dictionary<string, float>
+@{
+    ViewData["Title"] = "Estadisticas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Estadisticas</h1>
+
+@foreach (var zona in Model)
+{
+    @Html.TextBox(zona.Key,zona.Value, new {@class="form-control", @style="display:none"})
+}
+
+
+<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+
+@section Scripts{
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+
+    <script type="text/javascript">
+        window.onload = function () {
+
+            var options = {
+                title: {
+                    text: "Promedio de ventas por zona"
+                },
+                data: [{
+                    type: "pie",
+                    startAngle: 45,
+                    showInLegend: "true",
+                    legendText: "{label}",
+                    indexLabel: "{label} ({y})",
+                    yValueFormatString: "#.##",
+                    dataPoints: [
+                        { label: "Norte", y: $('#Norte').val() },
+                        { label: "Sur", y: $('#Sur').val() },
+                        { label: "Este", y: $('#Este').val() },
+                        { label: "Oeste", y: $('#Oeste').val() }
+                    ]
+                }]
+            };
+            $("#chartContainer").CanvasJSChart(options);
+
+        }
+    </script>
+}

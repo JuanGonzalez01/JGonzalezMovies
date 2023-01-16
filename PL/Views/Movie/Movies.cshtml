@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = null;
+}
+@model ML.Movie
+
+<link rel="stylesheet" type="text/css" href="css/Cards.css" />
+
+@if (Model.Peliculas.Count == 0 | Model.Peliculas == null)
+{
+    <div class="alert alert-danger" role="alert">
+        No hay películas agregadas a la lista.
+    </div>
+}
+else
+{
+    foreach (ML.Movie peli in Model.Peliculas)
+    {
+        <div class="movie-card">
+
+            <div class="container">
+
+                <a href="#"><img src=@peli.Poster alt="cover" class="cover" width="187" height="282" /></a>
+
+                <div class="hero" style="background: url(@peli.Fondo); background-size: 780px 350px;">
+
+                    <div class="details">
+
+                        <div class="title1"><h1>@peli.Nombre</h1></div>
+
+                        <div class="title2"><h2>(@peli.Fecha.Substring(0, 4))</h2></div>
+
+
+                    </div> <!-- end details -->
+
+        </div> <!-- end hero -->
+
+        <div class="description">
+
+                    <div class="column1">
+                    </div> <!-- end column1 -->
+
+            <div class="column2">
+
+                        <p>@peli.Descripcion</p>
+
+                    </div> <!-- end column2 -->
+        </div> <!-- end description -->
+
+
+    </div> <!-- end container -->
+</div> <!-- end movie-card -->
+    }
+}
+
+

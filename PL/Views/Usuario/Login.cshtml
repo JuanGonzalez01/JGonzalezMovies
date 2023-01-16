@@ -1,0 +1,23 @@
+﻿@{
+    Layout = null;
+}
+
+@model ML.Login
+
+<link rel="stylesheet" type="text/css" href="~/css/Login.css" />
+
+<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+
+<body>
+    <div class="login-block">
+        @using (Html.BeginForm("Login", "Usuario", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <h1>Login</h1>
+            @Html.TextBoxFor(Model => Model.UserName, new { type="text", placeholder = "Username", @id = "userName" })
+            @Html.TextBoxFor(Model => Model.Password, new { type="password", placeholder = "Password", @id = "password" })
+
+            <button type="submit" value="Guardar">Guardar</button>
+        }
+
+    </div>
+</body>
